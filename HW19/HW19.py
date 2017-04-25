@@ -137,18 +137,26 @@ class Dungeon:
         # should add a room off the lobby with
         # this exit
         newRoom = Room(name, description)
-        self.entrance.addRoom(exitPath, newRoom)
+        if (name == "CS Hallway"):
+            self.entrance.addRoom("west", newRoom)
         self.rooms.append(newRoom)
-        newRoom.addRoom("lobby", self.entrance)  # add lobby new rooms
+        # add newRoom destinations
+        if (self.rooms.__len__() < 4):
+            pass
+        else:
+            if (name == "CS Hallway"):
+                for d in exitPath:
+                    if (d == "north"):
+                        newRoom.addRoom(d, self.rooms[3])
+                    elif (d == "south"):
+                        newRoom.addRoom(d, self.rooms[1])
+                    elif (d == "west"):
+                        newRoom.addRoom(d, self.rooms[2])
+                    else:
+                        newRoom.addRoom("east", self.entrance)
 
 cscDept = Dungeon("CSC Dept")
 p1 = Player("Mike")
-cscDept.addRoom("CS Hallway", "A boring hallway in Dungeon CSC Dept", "west")
-cscDept.addRoom("S120", "Litman classroom in Dungeon CSC Dept", "north")
-cscDept.addRoom("S118", "Locklair classroom in Dungeon CSC Dept", "east")
-cscDept.addRoom("Mac Lab", "The Mac lab in Dungeon CSC Dept", "south")
-cscDept.entrance.addPlayer(p1)
-
 # s120 = Room("S120", "Litman classroom....")
 # csHallWay = Room("CS Hallway", "A boring hallway")
 # s118 = Room("S118", "Locklair classroom")
@@ -159,6 +167,13 @@ cscDept.entrance.addPlayer(p1)
 # csHallWay.addRoom("west", s118)
 # s118.addRoom("east", csHallWay)
 # macLab.addRoom("south", csHallWay)
+cscDept.addRoom("S120", "Litman classroom in Dungeon CSC Dept", ["north"])
+cscDept.addRoom("S118", "Locklair classroom in Dungeon CSC Dept", ["east"])
+cscDept.addRoom("Mac Lab", "The Mac lab in Dungeon CSC Dept", ["south"])
+cscDept.addRoom("CS Hallway", "A boring hallway in Dungeon CSC Dept", ["north", "south", "west"])
+
+cscDept.entrance.addPlayer(p1)
+
 # cscDept.entrance.display()
 while (True):
     p1.lookAround()
