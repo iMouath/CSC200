@@ -137,16 +137,16 @@ class Dungeon:
         # should add a room off the lobby with
         # this exit
         newRoom = Room(name, description)
-        if(name == "CS Hallway"):
-            self.entrance.addRoom("west", newRoom)
+        self.entrance.addRoom(exitPath, newRoom)
         self.rooms.append(newRoom)
+        newRoom.addRoom("lobby", self.entrance)  # add lobby new rooms
 
 cscDept = Dungeon("CSC Dept")
 p1 = Player("Mike")
-cscDept.addRoom("CS Hallway", "A boring hallway in Dungeon CSC Dept", ["north", "south", "west"])
-cscDept.addRoom("S120", "Litman classroom in Dungeon CSC Dept", ["north"])
-cscDept.addRoom("S118", "Locklair classroom in Dungeon CSC Dept", ["east"])
-cscDept.addRoom("Mac Lab", "The Mac lab in Dungeon CSC Dept", ["south"])
+cscDept.addRoom("CS Hallway", "A boring hallway in Dungeon CSC Dept", "west")
+cscDept.addRoom("S120", "Litman classroom in Dungeon CSC Dept", "north")
+cscDept.addRoom("S118", "Locklair classroom in Dungeon CSC Dept", "east")
+cscDept.addRoom("Mac Lab", "The Mac lab in Dungeon CSC Dept", "south")
 cscDept.entrance.addPlayer(p1)
 
 # s120 = Room("S120", "Litman classroom....")
