@@ -119,12 +119,9 @@ class Room:
         print(exitList)
 
         print("Also here:")
-        if (self.thePlayers.__len__() != 0):
-            for player in self.thePlayers:
-                player.display()
-                # show the destinations for this room
-        else:
-            print("No one is here :(\n")
+        for player in self.thePlayers:
+            player.display()
+            # show the destinations for this room
 
 
 class Dungeon:
@@ -139,7 +136,7 @@ class Dungeon:
         newRoom = Room(name, description)
         self.entrance.addRoom(exitPath, newRoom)
         self.rooms.append(newRoom)
-        newRoom.addRoom("lobby", self.entrance)  # add lobby new rooms
+        newRoom.addRoom("lobby", self.entrance)  # add lobby exit in new rooms
 
 cscDept = Dungeon("CSC Dept")
 p1 = Player("Mike")
