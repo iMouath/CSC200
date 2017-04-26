@@ -19,7 +19,7 @@ class Player:
         self.currentRoom = None
 
     def lookAround(self):
-        if (self.currentRoom == None):
+        if (self.currentRoom is None):
             print("In the Eeeether....")
         else:
             self.currentRoom.display()
@@ -125,41 +125,60 @@ class Room:
 
 
 class Dungeon:
-    def __init__(self, name):
+    def __init__(self, name, mainRoomName, mainRoomDescription):
         self.name = name
-        self.entrance = Room(name + " Lobby", "At the cave entrance")
+        self.entrance = Room(mainRoomName, mainRoomDescription)
         self.rooms = []
+        self.rooms.append(self.entrance)
 
-    def addRoom(self, name, description, exitPath):
-        # should add a room off the lobby with
-        # this exit
-        newRoom = Room(name, description)
-        self.entrance.addRoom(exitPath, newRoom)
-        self.rooms.append(newRoom)
-        newRoom.addRoom("lobby", self.entrance)  # add lobby exit in new rooms
+    def addPlayer(self, player):
+        self.entrance.addPlayer(player)
+        while (True):
+            player.lookAround()
+            option = player.showMenu()
+            if (option == "-1"):
+                break
+            elif (option == "create"):
+                option = input("What kind of room is this: new or old?")
+                if (option == "new"):
+                    direction = input("In what direction should we add this room? ")
+                    newRoomName = input("What is the name of the new room? ")
+                    newRoomDescription = input("What is the description of the new room? ")
+                    newRoom = Room(newRoomName, newRoomDescription)
+                    self.rooms.append(newRoom)
+                    player.currentRoom.addRoom(direction, newRoom)
+                else:
+                    # we need to show a list of existing rooms
+                    # and be able to uniquely identify them so
+                    # we can pick the room we want our new exit
+                    # to lead.
+                    for i in range(0, self.rooms.__len__()):
+                        existingRoom = self.rooms[i]
+                        print("\nThis room is available:")
+                        print(existingRoom.name)
+                        print(existingRoom.description)
+                        pick = input("\nDo you want to go to it? [yes OR no]")
+                        while (pick == "yes"):  # if not go through other rooms in rooms
+                            player.currentRoom.removePlayer(player)
+                            existingRoom.addPlayer(player)
+                            break
 
-cscDept = Dungeon("CSC Dept")
+            else:
+                player.currentRoom.takeExit(player, option)
+
+
 p1 = Player("Mike")
-cscDept.addRoom("CS Hallway", "A boring hallway in Dungeon CSC Dept", "west")
-cscDept.addRoom("S120", "Litman classroom in Dungeon CSC Dept", "north")
-cscDept.addRoom("S118", "Locklair classroom in Dungeon CSC Dept", "east")
-cscDept.addRoom("Mac Lab", "The Mac lab in Dungeon CSC Dept", "south")
-cscDept.entrance.addPlayer(p1)
+s120 = Room("S120", "Litman classroom....")
+csHallWay = Room("CS Hallway", "A boring hallway")
+s118 = Room("S118", "Locklair classroom")
+macLab = Room("Mac Lab", "The mac lab")
+s120.addRoom("north", csHallWay)
+csHallWay.addRoom("south", s120)
+csHallWay.addRoom("north", macLab)
+csHallWay.addRoom("west", s118)
+s118.addRoom("east", csHallWay)
+macLab.addRoom("south", csHallWay)
+# s120.addPlayer(p1)
 
-# s120 = Room("S120", "Litman classroom....")
-# csHallWay = Room("CS Hallway", "A boring hallway")
-# s118 = Room("S118", "Locklair classroom")
-# macLab = Room("Mac Lab", "The mac lab")
-# s120.addRoom("north", csHallWay)
-# csHallWay.addRoom("south", s120)
-# csHallWay.addRoom("north", macLab)
-# csHallWay.addRoom("west", s118)
-# s118.addRoom("east", csHallWay)
-# macLab.addRoom("south", csHallWay)
-# cscDept.entrance.display()
-while (True):
-    p1.lookAround()
-    where = p1.showMenu()
-    if (where == "-1"):
-        break
-    p1.currentRoom.takeExit(p1, where)
+csDept = Dungeon("CS Department", "CS Hallway", "A boring hallway")
+csDept.addPlayer(p1)
